@@ -1,7 +1,7 @@
 resource "aws_eks_cluster" "mohsin-eks-cluster" {
   name     = "mohsin-eks-cluster"
   role_arn = aws_iam_role.eksClusterRole.arn
-  version  = "1.27"
+  version  = var.eks_cluster_version
 
   vpc_config {
     subnet_ids = [

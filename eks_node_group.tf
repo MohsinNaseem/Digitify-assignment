@@ -24,7 +24,7 @@ resource "aws_eks_node_group" "worker-nodes" {
   capacity_type  = "ON_DEMAND"
   instance_types = [var.worker_instance_type]
   disk_size      = 60
-  version = "1.27"
+  version = var.eks_node_version
 
   remote_access {
     ec2_ssh_key  = "worker-keypair"

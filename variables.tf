@@ -29,9 +29,23 @@ variable "vpc_cidr" {
   description = "CIDR for VPC"
 }
 
-# Instance type
+# EKS Worker Node Instance type
 variable "worker_instance_type" {
   default     = "t3.xlarge"
   type        = string
   description = "Worker node instance type"
+}
+
+# EKS cluster version
+variable "eks_cluster_version" {
+  default     = "1.27"
+  type        = string
+  description = "EKS cluster version"
+}
+
+# EKS Worker Node version
+variable "eks_node_version" {
+  default     = "1.27"
+  type        = string
+  description = "EKS Worker Node version"
 }
