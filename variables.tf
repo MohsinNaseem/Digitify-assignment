@@ -34,5 +34,4 @@ variable "worker_instance_type" {
   default     = "t3.xlarge"
   type        = string
   description = "Worker node instance type"
-
 }
