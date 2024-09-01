@@ -5,10 +5,20 @@ on:
   #   branches:
   #     - main
   workflow_dispatch: # Allows manual trigger
+    inputs:
+      environment:
+        description: environment to apply changes
+        required: true
+        type: choice
+        options:
+        - dev
+        - staging
+        - ua
+        - production
 
 jobs:
   plan:
-    name: Validate and plan changes
+    name: Validate and plan changes on ${{inputs.environment}} environment
     runs-on: ubuntu-latest
 
     steps:
@@ -41,7 +51,54 @@ jobs:
 
       - name: Terraform Plan
         id: tf_plan
-        run: terraform plan -out=tfplan
+        run: |
+          terraform plan -out=tfplan.json
+
+          terraform show -no-color tfplan.json 2>&1 > tfplan.txt
+
+          # Parse tfplan.txt
+          plan_line=$(grep "Plan:" tfplan.txt || echo "No changes")
+
+          if [[ "$plan_line" == "Plan:"* ]]; then
+              TF_PLAN_ADD=$(echo "$plan_line" | awk '{print $2}')
+              TF_PLAN_CHANGE=$(echo "$plan_line" | awk '{print $5}')
+              TF_PLAN_DESTROY=$(echo "$plan_line" | awk '{print $8}')
+          else
+              # If the plan lines don't start with "Plan:", set all variables to 0
+              TF_PLAN_ADD=0
+              TF_PLAN_CHANGE=0
+              TF_PLAN_DESTROY=0
+          fi
+
+          # Print the variables and store as output
+          echo "TF_PLAN_ADD: $TF_PLAN_ADD"
+          echo "TF_PLAN_CHANGE: $TF_PLAN_CHANGE"
+          echo "TF_PLAN_DESTROY: $TF_PLAN_DESTROY"
+
+  apply:
+    name: Apply changes on ${{inputs.environment}} environment
+    runs-on: ubuntu-latest
+    needs: [plan]
+    environment: ${{inputs.environment}}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Pull the repo changes done on the previous job
+        run: git pull
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3.1.1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init -input=false -backend=true
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply --auto-approve tfplan.json
