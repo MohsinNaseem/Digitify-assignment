@@ -101,4 +101,4 @@ jobs:
         run: terraform init -input=false -backend=true
 
       - name: Terraform Apply
-        run: terraform apply --auto-approve tfplan.json
+        run: terraform apply --auto-approve
