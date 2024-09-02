@@ -1,0 +1,22 @@
+name: Calling Reuseable Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run the workflow'
+        type: choice
+        options:
+        - dev
+        - staging
+        - production
+        required: true
+
+
+jobs:
+  manual-start-stop:
+    name: "Calling Reuseable Workflow Job"
+    uses: MohsinNaseem/reusable-workflows/blob/main/.github/workflows/reusebale-test-workflow.yaml@main
+    with:
+      environment : ${{ github.event.inputs.environment }}
+      main-repo: ${{ github.event.repository.name }}
