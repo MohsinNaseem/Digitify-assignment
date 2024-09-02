@@ -25,9 +25,9 @@ on:
 
 jobs:
   terraform:
-    name: "Deploy"
+    name: "Plan and Apply"
     uses: MohsinNaseem/reusable-workflows/.github/workflows/terraform-plan-apply.yaml@main
     with:
-      environment: ${{github.event.inputs.environment}}
+      environment: ${{ github.event.inputs.environment }}
       main-repo: ${{ github.event.repository.name }}
     secrets: inherit
