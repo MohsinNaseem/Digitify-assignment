@@ -16,7 +16,8 @@ on:
 jobs:
   manual-start-stop:
     name: "Calling Reuseable Workflow Job"
-    uses: MohsinNaseem/reusable-workflows/blob/main/.github/workflows/reusebale-test-workflow.yaml@main
+    uses: MohsinNaseem/reusable-workflows/.github/workflows/reusebale-test-workflow.yaml@main
     with:
       environment : ${{ github.event.inputs.environment }}
       main-repo: ${{ github.event.repository.name }}
+    secrets: inherit
