@@ -1,8 +1,8 @@
 name: Terraform Destroy
 
 on:
-  workflow_dispatch: # Allows manual trigger
-
+  workflow_dispatch:
+    
 jobs:
   terraform:
     name: Terraform Destroy
