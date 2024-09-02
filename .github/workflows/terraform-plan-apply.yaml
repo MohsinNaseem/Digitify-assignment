@@ -1,0 +1,29 @@
+name: Deploy infrastructure
+
+on:
+  # push:
+  #   branches:
+  #     - main 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy the infrastructure'
+        type: choice
+        options:
+        - dev
+        - staging
+        - production
+        required: true
+      main-repo:
+        description: main repository to be used
+        required: true
+        type: string
+
+jobs:
+  terraform:
+    name: "Deploy"
+    uses: MohsinNaseem/reusable-workflows/.github/workflows/terraform-plan-apply.yaml@main
+    with:
+      environment: ${{github.event.inputs.environment}}
+      main-repo: ${{ github.event.repository.name }}
+    secrets: inherit
