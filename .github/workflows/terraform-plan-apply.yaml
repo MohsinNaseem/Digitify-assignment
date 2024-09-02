@@ -18,10 +18,6 @@ on:
         - staging
         - production
         required: true
-      main-repo:
-        description: main repository to be used
-        required: true
-        type: string
 
 jobs:
   terraform:
